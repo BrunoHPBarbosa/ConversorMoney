@@ -34,7 +34,6 @@ class CurrencyAdapter(
         val flagImageView = view.findViewById<ImageView>(R.id.imgFlag1)
         val nameTextView = view.findViewById<TextView>(R.id.txtNameFlag1)
 
-
         val flagUrl = country.flags.png
         Picasso.get()
             .load(flagUrl)
@@ -45,5 +44,12 @@ class CurrencyAdapter(
         nameTextView.text = " ${currency?.symbol ?: ""} (${country.name.common})"
 
         return view
+    }
+
+    // Método para obter a posição pelo código da moeda
+    fun getPositionByCountryCurrency(currency: String): Int {
+        return countries.indexOfFirst { country ->
+            country.currencies.keys.firstOrNull() == currency
+        }
     }
 }

@@ -1,10 +1,12 @@
 package com.example.conversormoney.view.activity
 
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -44,7 +46,38 @@ class MainActivity : AppCompatActivity() {
         // Chama a função para buscar países
         viewModelCountry.fetchCountries()
         observeCountries()
+
+        binding.fabReverse.setOnClickListener {
+            // Animar o botão girando 90 graus
+            val animator = ObjectAnimator.ofFloat(binding.fabReverse, "rotation", 0f, 90f)
+            animator.duration = 300 // Duração da animação em milissegundos
+            animator.interpolator = AccelerateDecelerateInterpolator() // Efeito de aceleração e desaceleração
+            animator.start()
+
+            viewModel.reverseCurrencies()
+        }
     }
+
+    private fun updateSpinnerSelections(fromCurrency: String, toCurrency: String) {
+        val fromAdapter = binding.spinner.adapter as? CurrencyAdapter
+        val toAdapter = binding.spinner2.adapter as? CurrencyAdapter
+
+        if (fromAdapter != null && toAdapter != null) {
+            val fromPosition = fromAdapter.getPositionByCountryCurrency(fromCurrency)
+            val toPosition = toAdapter.getPositionByCountryCurrency(toCurrency)
+
+            if (fromPosition >= 0) {
+                binding.spinner.setSelection(fromPosition)
+            }
+            if (toPosition >= 0) {
+                binding.spinner2.setSelection(toPosition)
+            }
+        } else {
+            // Exibir mensagem de erro ou realizar uma ação apropriada
+            Toast.makeText(this, "Adaptadores ainda não configurados.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
     private fun setupSpinnerListeners() {
         binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -108,13 +141,15 @@ class MainActivity : AppCompatActivity() {
                         Toast.makeText(this@MainActivity, resource.message, Toast.LENGTH_SHORT).show()
                     }
 
-                    is ResourceState.Loading -> TODO()
-
+                    is ResourceState.Loading -> {}
 
                     is ResourceState.Empty -> {
                         binding.txtTotalConverted.text = ""
                     }
                 }
+
+                // Atualize as seleções dos Spinners após a conversão
+                updateSpinnerSelections(viewModel.fromCurrency.value, viewModel.toCurrency.value)
             }
         }
     }
@@ -134,11 +169,9 @@ class MainActivity : AppCompatActivity() {
                         Toast.makeText(this@MainActivity, resource.message, Toast.LENGTH_SHORT).show()
                     }
 
-                    is ResourceState.Loading -> TODO()
+                    is ResourceState.Loading -> {}
 
-
-
-                    is ResourceState.Empty -> TODO()
+                    is ResourceState.Empty -> {}
                 }
             }
         }

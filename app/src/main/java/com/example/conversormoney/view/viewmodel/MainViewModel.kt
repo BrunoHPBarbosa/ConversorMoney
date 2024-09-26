@@ -20,23 +20,36 @@ class MainViewModel @Inject constructor(
     private val _amount = MutableStateFlow<ResourceState<ConversorResponse>>(ResourceState.Empty())
     val amount: StateFlow<ResourceState<ConversorResponse>> = _amount
 
-    private var fromCurrency: String = ""
-    private var toCurrency: String = ""
+    private val _fromCurrency = MutableStateFlow("")
+    val fromCurrency: StateFlow<String> = _fromCurrency
+
+    private val _toCurrency = MutableStateFlow("")
+    val toCurrency: StateFlow<String> = _toCurrency
+
+    fun reverseCurrencies() {
+        // Troca as moedas
+        val tempCurrency = _fromCurrency.value
+        _fromCurrency.value = _toCurrency.value
+        _toCurrency.value = tempCurrency
+
+        // Revalida e refaz a conversão
+        validateAndFetchAmount()
+    }
 
     fun updateFromCurrency(currency: String) {
-        fromCurrency = currency
+        _fromCurrency.value = currency
         validateAndFetchAmount()
     }
 
     fun updateToCurrency(currency: String) {
-        toCurrency = currency
+        _toCurrency.value = currency
         validateAndFetchAmount()
     }
 
     fun setAmount(amount: String) {
         val cleanString = amount.replace(",", ".").toDoubleOrNull() ?: 0.0
-        if (cleanString > 0 && fromCurrency.isNotEmpty() && toCurrency.isNotEmpty()) {
-            fetchAmount(fromCurrency, toCurrency, cleanString)
+        if (cleanString > 0 && _fromCurrency.value.isNotEmpty() && _toCurrency.value.isNotEmpty()) {
+            fetchAmount(_fromCurrency.value, _toCurrency.value, cleanString)
         } else {
             _amount.value = ResourceState.Empty()
         }
@@ -44,8 +57,8 @@ class MainViewModel @Inject constructor(
 
     private fun validateAndFetchAmount() {
         // Verifica se todas as condições são atendidas para realizar a conversão
-        if (fromCurrency.isNotEmpty() && toCurrency.isNotEmpty()) {
-            fetchAmount(fromCurrency, toCurrency, 1.0)
+        if (_fromCurrency.value.isNotEmpty() && _toCurrency.value.isNotEmpty()) {
+            fetchAmount(_fromCurrency.value, _toCurrency.value, 1.0)
         }
     }
 
