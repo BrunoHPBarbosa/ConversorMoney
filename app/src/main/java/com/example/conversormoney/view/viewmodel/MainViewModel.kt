@@ -1,10 +1,8 @@
 package com.example.conversormoney.view.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.conversormoney.model.ConversorResponse
-import com.example.conversormoney.model.Country
 import com.example.conversormoney.repository.ConversorRepository
 import com.example.conversormoney.resource.ResourceState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,41 +15,57 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val repository: ConversorRepository
-):ViewModel() {
+) : ViewModel() {
 
-    private val _ammount =
-        MutableStateFlow<ResourceState<ConversorResponse>>(ResourceState.Loading())
-    val ammount: StateFlow<ResourceState<ConversorResponse>> = _ammount
+    private val _amount = MutableStateFlow<ResourceState<ConversorResponse>>(ResourceState.Empty())
+    val amount: StateFlow<ResourceState<ConversorResponse>> = _amount
 
+    private var fromCurrency: String = ""
+    private var toCurrency: String = ""
 
-    fun fetchAmmount(fromCurrency: String, toCurrency: String, amount: Double) {
+    fun updateFromCurrency(currency: String) {
+        fromCurrency = currency
+        validateAndFetchAmount()
+    }
+
+    fun updateToCurrency(currency: String) {
+        toCurrency = currency
+        validateAndFetchAmount()
+    }
+
+    fun setAmount(amount: String) {
+        val cleanString = amount.replace(",", ".").toDoubleOrNull() ?: 0.0
+        if (cleanString > 0 && fromCurrency.isNotEmpty() && toCurrency.isNotEmpty()) {
+            fetchAmount(fromCurrency, toCurrency, cleanString)
+        } else {
+            _amount.value = ResourceState.Empty()
+        }
+    }
+
+    private fun validateAndFetchAmount() {
+        // Verifica se todas as condições são atendidas para realizar a conversão
+        if (fromCurrency.isNotEmpty() && toCurrency.isNotEmpty()) {
+            fetchAmount(fromCurrency, toCurrency, 1.0)
+        }
+    }
+
+    private fun fetchAmount(fromCurrency: String, toCurrency: String, amount: Double) {
         viewModelScope.launch {
             try {
                 val response = repository.getConversor(fromCurrency, toCurrency, amount)
-                Log.d("MainViewModel", "Resposta da API: $response")
-                _ammount.value = handleResponseSeries(response)
+                _amount.value = handleResponseConversor(response)
             } catch (t: Throwable) {
-                _ammount.value = ResourceState.Error("Erro ao buscar dados: ${t.message}")
-                Log.e("MainViewModel", "Erro ao buscar dados: ${t.message}", t)
+                _amount.value = ResourceState.Error("Erro ao buscar dados: ${t.message}")
             }
         }
     }
 
-    // Função para tratar a resposta da série
-    private fun handleResponseSeries(response: Response<ConversorResponse>): ResourceState<ConversorResponse> {
+    private fun handleResponseConversor(response: Response<ConversorResponse>): ResourceState<ConversorResponse> {
         if (response.isSuccessful) {
             response.body()?.let {
-                Log.d("MainViewModel", "Corpo da resposta: $it") // Adicione este log
-                if (it.result != null) {
-                    return ResourceState.Success(it)
-                } else {
-                    return ResourceState.Error("Resultado da conversão não disponível")
-                }
-            } ?: return ResourceState.Error("Corpo da resposta vazio")
-        } else {
-            Log.e("MainViewModel", "Erro na resposta: ${response.code()} ${response.message()}")
-            return ResourceState.Error("Erro na resposta da API: ${response.message()}")
+                return ResourceState.Success(it)
+            } ?: return ResourceState.Error("Erro: Resposta vazia")
         }
+        return ResourceState.Error("Erro na resposta: ${response.message()}")
     }
 }
-

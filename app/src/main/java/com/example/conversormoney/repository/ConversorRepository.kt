@@ -9,12 +9,12 @@ class ConversorRepository @Inject constructor(
     @Named("mainServiceApi") private val api: ServiceApi
 
 ) {
-    suspend fun getConversor(fromCurrency: String, toCurrency: String, amount: Double, date: String? = null) = api.getConversor(
+    suspend fun getConversor(fromCurrency: String, toCurrency: String, amount: Double) = api.getConversor(
         accessKey = Constants.API_KEY,
         from = fromCurrency,
         to = toCurrency,
         amount = amount,
-      //  date = date
+
     )
 
 }

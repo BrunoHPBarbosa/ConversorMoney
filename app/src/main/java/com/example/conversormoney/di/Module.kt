@@ -31,7 +31,7 @@ object Module {
 
     @Singleton
     @Provides
-    @Named("mainRetrofit") // Adicionando o nome
+    @Named("mainRetrofit")
     fun provideMainRetrofit(client: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)

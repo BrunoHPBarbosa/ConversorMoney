@@ -1,5 +1,6 @@
 package com.example.conversormoney.view.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -24,22 +25,24 @@ class CurrencyAdapter(
         return createView(position, convertView, parent)
     }
 
+    @SuppressLint("SetTextI18n")
     private fun createView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.spinner_item, parent, false)
+        val view = convertView ?: LayoutInflater.from(context)
+            .inflate(R.layout.spinner_item, parent, false)
 
         val country = countries[position]
-        val flagImageView = view.findViewById<ImageView>(R.id.imgFlag1) // Imagem da bandeira
-        val nameTextView = view.findViewById<TextView>(R.id.txtNameFlag1) // Nome da moeda ou país
+        val flagImageView = view.findViewById<ImageView>(R.id.imgFlag1)
+        val nameTextView = view.findViewById<TextView>(R.id.txtNameFlag1)
 
-        // Obter a bandeira
-        val flagUrl = country.flags.png // Usar o URL da bandeira PNG
+
+        val flagUrl = country.flags.png
         Picasso.get()
             .load(flagUrl)
             .into(flagImageView)
 
         // Obter a primeira moeda disponível
         val currency = country.currencies.values.firstOrNull()
-        nameTextView.text = " ${currency?.symbol ?: ""} (${country.name.common})" // Exibir nome do país e símbolo da moeda
+        nameTextView.text = " ${currency?.symbol ?: ""} (${country.name.common})"
 
         return view
     }
