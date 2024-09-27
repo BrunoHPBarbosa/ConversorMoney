@@ -1,6 +1,6 @@
-# Online Shop App
+# Money Conversor 
 
-Create a native android app, using Firebase.
+Create a native android app, using Api EXConvert and Api RestCountryes.
 
 
 ## :movie_camera: Video
@@ -19,8 +19,10 @@ Create a native android app, using Firebase.
 - Kotlin
 - Clean Architecture
 - MVVM
-- Glide
-- Jetpack Components (ViewBinding)
+- Picasso
+- Jetpack Components (ViewBinding;lifeCycle,hilt..)
+- Retrofit
+- Hilt
 
   * Clean Architecture:
     - Separação de conceitos;
@@ -34,9 +36,9 @@ Create a native android app, using Firebase.
     - Testabilidade.
      
   
- * Glide 
+ * Picasso 
   - É uma estrutura de gerenciamento de mídia e carregamento de imagens de código aberto rápida e eficiente para Android com uma  interface simples e fácil de usar.
 
  * Splash Screen
-   - Utlizei a nova forma de se criar uma splash screen , mais rapida e simples , mas tambem utilizei outra forma em que adiciono um gif como tela inicial do app 
+   - Utlizei a nova forma de se criar uma splash screen , mais rapida e simples 
 
