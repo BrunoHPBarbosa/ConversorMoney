@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="mySplash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="windowSplashScreenAnimationDuration">2000</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/take_the_money</item>
+        <item name="postSplashScreenTheme">@style/Theme.ConversorMoney</item>
+
+    </style>
+</resources>
