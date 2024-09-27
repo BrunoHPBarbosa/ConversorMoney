@@ -15,13 +15,18 @@ Create a native android app, using Api EXConvert and Api RestCountryes.
 
 🛠️ Technologies used
 
+
 - Kotlin
 - Clean Architecture
 - MVVM
-- Picasso
-- Jetpack Components (ViewBinding;lifeCycle,hilt..)
 - Retrofit
-- Hilt
+- Dagger Hilt
+- Coroutines
+- Glide
+- Flow
+- State Flow
+- Room Database
+- Jetpack Components (ViewBinding, Navigation Components)
 
   * Clean Architecture:
     - Separação de conceitos;
